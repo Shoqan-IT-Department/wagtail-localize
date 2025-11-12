@@ -85,6 +85,18 @@ def handle_related_object(related_model, src_locale, tgt_locale, segments):
                 len(segments)
             )
         )
+    # при публикации перевода на казахский вылетает ошибка
+    try:
+        segment = segments[0]
+
+        if isinstance(segment, OverridableSegmentValue):
+            return related_model.objects.get(pk=segment.data)
+
+        else:
+            # Assume it's a RelatedObjectValue
+            return segment.get_instance(tgt_locale)
+    except IndexError:
+        pass
 
     segment = segments[0]
 
