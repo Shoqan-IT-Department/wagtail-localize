@@ -1445,10 +1445,15 @@ class String(models.Model):
         Returns:
             String: The String instance that corresponds with the given stringvalue and locale.
         """
+
+        def clean_data(data):
+            return ' '.join(data.split())
+
+        cleaned_string = clean_data(stringvalue.data)
         string, created = cls.objects.get_or_create(
             locale_id=pk(locale),
-            data_hash=cls._get_data_hash(stringvalue.data),
-            defaults={"data": stringvalue.data},
+            data_hash=cls._get_data_hash(cleaned_string),
+            defaults={"data": cleaned_string},
         )
 
         return string
